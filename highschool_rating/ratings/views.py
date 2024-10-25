@@ -1,36 +1,36 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from rest_framework import viewsets
 from .models import HighSchool, Review
-from django.views.decorators.csrf import csrf_exempt
-import json
+from .serializers import HighSchoolSerializer, ReviewSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
-@csrf_exempt
-def list_highschools(request):
-    if request.method == 'GET':
-        highschools = list(HighSchool.objects.values())
-        return JsonResponse(highschools, safe=False)
+class HighSchoolViewSet(viewsets.ModelViewSet):
+    queryset = HighSchool.objects.all()
+    serializer_class = HighSchoolSerializer
 
-@csrf_exempt
-def add_highschool(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        highschool, created = HighSchool.objects.get_or_create(
-            name=data['name'],
-            state=data['state'],
-            city=data['city']
-        )
-        return JsonResponse({'id': highschool.id, 'created': created})
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
 
-@csrf_exempt
-def add_review(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        highschool = HighSchool.objects.get(id=data['highschool_id'])
-        review = Review.objects.create(
-            highschool=highschool,
-            rating=data['rating'],
-            review_text=data['review_text']
-        )
-        return JsonResponse({'id': review.id})
+@api_view(['POST'])
+def register(request):
+    data = request.data
+    user = User.objects.create_user(
+        username=data['username'],
+        password=data['password']
+    )
+    return Response({'id': user.id})
+
+@api_view(['POST'])
+def user_login(request):
+    data = request.data
+    user = authenticate(username=data['username'], password=data['password'])
+    if user is not None:
+        login(request, user)
+        return Response({'message': 'Login successful'})
+    else:
+        return Response({'message': 'Invalid credentials'}, status=400)
