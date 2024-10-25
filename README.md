@@ -15,7 +15,7 @@
 
 ### Clone the Repository:
 ```bash
-git clone https://github.com/your-username/highschool_.git
+git clone https://github.com/your-username/highschool_rating.git
 ```
 
 ### Install Dependencies:
