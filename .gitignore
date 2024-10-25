@@ -1,0 +1,25 @@
+# Operating system files
+node_modules/
+yarn.lock
+npm-debug.log*
+npm-cache_logs*
+package-lock.json
+
+# IDE files
+.idea/
+.vscode/
+
+# Testing files
+coverage/
+*.log
+*.sqlite
+*.db
+
+# Python files
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# SQL files
+*.db
+*.sqlite
